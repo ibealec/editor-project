@@ -8,7 +8,7 @@ const VL: React.FC = () => (
       marginLeft: '0.3rem',
       marginRight: '0.3rem',
     }}
-  ></div>
+  />
 );
 
 export default VL;

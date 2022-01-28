@@ -4,13 +4,13 @@ import { BaseEditor, Editor, Element as SlateElement, Transforms } from 'slate';
 import { HistoryEditor } from 'slate-history';
 import { jsx } from 'slate-hyperscript';
 import { ReactEditor } from 'slate-react';
-import { CustomElement, CustomElementType } from './CustomElement';
+import { CustomElementType } from './CustomElement';
 import { CustomText } from './CustomLeaf';
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 
 const ELEMENT_TAGS = {
-  A: (el) => ({ type: 'link', url: el.getAttribute('href') }),
+  A: (el: HTMLElement) => ({ type: 'link', url: el.getAttribute('href') }),
   BLOCKQUOTE: () => ({ type: 'quote' }),
   H1: () => ({ type: 'heading-one' }),
   H2: () => ({ type: 'heading-two' }),
@@ -18,7 +18,7 @@ const ELEMENT_TAGS = {
   H4: () => ({ type: 'heading-four' }),
   H5: () => ({ type: 'heading-five' }),
   H6: () => ({ type: 'heading-six' }),
-  IMG: (el) => ({ type: 'image', url: el.getAttribute('src') }),
+  IMG: (el: HTMLElement) => ({ type: 'image', url: el.getAttribute('src') }),
   LI: () => ({ type: 'list-item' }),
   OL: () => ({ type: 'numbered-list' }),
   P: () => ({ type: 'paragraph' }),
@@ -115,12 +115,12 @@ export const handleHotkeys =
     }
   };
 
-// Newly pasted content needs to be deserialized into data that Slate can understand.
+// Pasted content needs to be deserialized into data that Slate can understand.
 // Though there are plugins that help with this, we've opted to use code from Slates examples:
 // https://github.com/ianstormtaylor/slate/blob/f1b7d18f43913474617df02f747afa0e78154d85/site/examples/paste-html.tsx
 // The deserialization is straightforward enough to not warrent using Platejs or any other library.
 
-export const deserialize: string | CustomElement | null = (el: ChildNode) => {
+export const deserialize = (el: ChildNode) => {
   if (el.nodeType === 3) {
     return el.textContent;
   } else if (el.nodeType !== 1) {
@@ -187,9 +187,10 @@ export const withHtml = (editor: ReactEditor & HistoryEditor & BaseEditor) => {
     if (html) {
       const parsed = new DOMParser().parseFromString(html, 'text/html');
       const fragment = deserialize(parsed.body);
-      console.log('F', fragment);
       try {
-        Transforms.insertFragment(editor, fragment);
+        if (fragment) {
+          Transforms.insertFragment(editor, fragment);
+        }
       } catch (e) {
         console.log('E', e);
       }

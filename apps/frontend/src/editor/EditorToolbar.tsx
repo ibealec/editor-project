@@ -1,7 +1,6 @@
-import { Box } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
 import { useSlate } from 'slate-react';
-import { VL } from '../shared';
+import { Row, VL } from '../shared';
 import { CustomElementType } from './CustomElement';
 import { CustomText } from './CustomLeaf';
 import {
@@ -75,11 +74,8 @@ const MarkButton: React.FC<MarkButtonProps> = ({ format, icon }) => {
 
 export const EditorToolbar: React.FC = () => {
   return (
-    <Box
+    <Row
       sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'center',
         borderBottom: '1px solid #eee',
         paddingBottom: '1rem',
@@ -102,6 +98,6 @@ export const EditorToolbar: React.FC = () => {
         format={CustomElementType.bulletedList}
         icon="list_bulleted"
       />
-    </Box>
+    </Row>
   );
 };
