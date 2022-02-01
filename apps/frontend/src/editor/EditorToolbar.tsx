@@ -1,8 +1,8 @@
-import { Link } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
-import { useSlate } from 'slate-react';
+import { Editor, Path, Range, Transforms } from 'slate';
+import { ReactEditor, useSlate } from 'slate-react';
 import { Row, VL } from '../shared';
+import AddLinkButton from './AddLinkButton';
 import { CustomElementType } from './CustomElement';
 import { CustomText } from './CustomLeaf';
 import {
@@ -12,8 +12,6 @@ import {
   toggleMark,
 } from './helpers';
 import Icon from './Icon';
-
-function insertLink() {}
 
 interface ButtonProps {
   active: boolean;
@@ -56,6 +54,73 @@ const BlockButton: React.FC<BlockButtonProps> = ({ format, icon }) => {
   );
 };
 
+const createLinkNode = (href: string, text: string) => ({
+  type: 'link',
+  href,
+  children: [{ text }],
+});
+
+const removeLink = (editor: Editor, opts = {}) => {
+  Transforms.unwrapNodes(editor, {
+    ...opts,
+    match: (n) => !Editor.isEditor(n) && n.type === 'link',
+  });
+};
+
+const insertLink = (editor: Editor, url: string) => {
+  if (!url) return;
+
+  const { selection } = editor;
+  const link = createLinkNode(url, 'New Link');
+
+  ReactEditor.focus(editor);
+
+  if (!!selection) {
+    const [parentNode, parentPath] = Editor.parent(
+      editor,
+      selection.focus?.path
+    );
+
+    if (parentNode.type === 'link') {
+      removeLink(editor);
+    }
+
+    if (editor.isVoid(parentNode)) {
+      // Insert the new link after the void node
+      console.log('IS VOID');
+      Transforms.insertNodes(
+        editor,
+        [
+          {
+            children: [link],
+            type: 'paragraph',
+          },
+        ],
+        {
+          at: Path.next(parentPath),
+          select: true,
+        }
+      );
+    } else if (Range.isCollapsed(selection)) {
+      console.log('IS< COLLAPS');
+      Transforms.insertNodes(editor, link, { select: true });
+    } else {
+      console.log('WRAPS');
+      Transforms.wrapNodes(editor, link, { split: true });
+      Transforms.collapse(editor, { edge: 'end' });
+    }
+  } else {
+    console.log('ELSe ');
+
+    Transforms.insertNodes(editor, [
+      {
+        children: [link],
+        type: 'paragraph',
+      },
+    ]);
+  }
+};
+
 interface MarkButtonProps {
   format: keyof CustomText;
   icon: string;
@@ -77,6 +142,8 @@ const MarkButton: React.FC<MarkButtonProps> = ({ format, icon }) => {
 };
 
 export const EditorToolbar: React.FC = () => {
+  const editor = useSlate();
+
   return (
     <Row
       sx={{
@@ -94,9 +161,7 @@ export const EditorToolbar: React.FC = () => {
       <BlockButton format={CustomElementType.headingTwo} icon="h2" />
       <VL />
       {/* <BlockButton format={CustomElementType.link} icon="link" /> */}
-      <IconButton onClick={insertLink}>
-        <Link></Link>
-      </IconButton>
+      <AddLinkButton />
 
       <BlockButton format={CustomElementType.blockQuote} icon="quote" />
       <BlockButton
