@@ -5,6 +5,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import LooksOneIcon from '@mui/icons-material/LooksOne';
 import LooksTwoIcon from '@mui/icons-material/LooksTwo';
 import * as React from 'react';
@@ -41,6 +42,9 @@ function determineIcon(icon: string) {
 
     case 'h2':
       return <LooksTwoIcon />;
+
+    case 'link':
+      return <InsertLinkIcon />;
 
     default:
       return <>{icon}</>;

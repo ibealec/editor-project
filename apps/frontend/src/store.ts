@@ -1,5 +1,5 @@
 import { createStore } from 'redux';
-import linkReducer from './reducer';
-let store = createStore(linkReducer);
+import rootReducer from './rootReducer';
+let store = createStore(rootReducer);
 
 export default store;

@@ -1,6 +1,12 @@
 import isHotkey from 'is-hotkey';
 import { KeyboardEvent } from 'react';
-import { BaseEditor, Editor, Element as SlateElement, Transforms } from 'slate';
+import {
+  BaseEditor,
+  Descendant,
+  Editor,
+  Element as SlateElement,
+  Transforms,
+} from 'slate';
 import { HistoryEditor } from 'slate-history';
 import { jsx } from 'slate-hyperscript';
 import { ReactEditor } from 'slate-react';
@@ -145,7 +151,9 @@ export const deserialize = (el: ChildNode) => {
   ) {
     parent = el.childNodes[0];
   }
-  let children: ChildNode[] = Array.from(parent.childNodes)
+  let children: (string | ChildNode | Descendant | null)[] = Array.from(
+    parent.childNodes
+  )
     .map(deserialize)
     .flat();
 
@@ -156,14 +164,20 @@ export const deserialize = (el: ChildNode) => {
   if (el.nodeName === 'BODY') {
     return jsx('fragment', {}, children);
   }
-
+  //@ts-ignore
   if (ELEMENT_TAGS[nodeName]) {
+    //@ts-ignore
+
     const attrs = ELEMENT_TAGS[nodeName](el);
     return jsx('element', attrs, children);
   }
+  //@ts-ignore
 
   if (TEXT_TAGS[nodeName]) {
+    //@ts-ignore
+
     const attrs = TEXT_TAGS[nodeName](el);
+    //@ts-ignore
     return children.map((child: ChildNode) => jsx('text', attrs, child));
   }
 
@@ -189,6 +203,7 @@ export const withHtml = (editor: ReactEditor & HistoryEditor & BaseEditor) => {
       const fragment = deserialize(parsed.body);
       try {
         if (fragment) {
+          //@ts-ignore
           Transforms.insertFragment(editor, fragment);
         }
       } catch (e) {

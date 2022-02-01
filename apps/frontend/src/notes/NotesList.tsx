@@ -1,19 +1,26 @@
-import React from 'react'
-import Link from 'next/link'
-import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { Assignment as AssignmentIcon } from '@mui/icons-material'
-import { useNotesList } from './hooks'
+import { Assignment as AssignmentIcon } from '@mui/icons-material';
+import {
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
+import Link from 'next/link';
+import React from 'react';
+import { useNotesList } from './hooks';
 
 interface NotesListProps {
-  activeNoteId?: string
+  activeNoteId?: string;
 }
 
 const NotesList: React.FC<NotesListProps> = ({ activeNoteId }) => {
-  const { notesList } = useNotesList()
+  const { notesList } = useNotesList();
+
+  console.log('N:', notesList);
 
   return (
     <List>
-      {notesList?.map((note) => (
+      {notesList?.notes?.map((note) => (
         <Link href={`/notes/${note.id}`} key={note.id}>
           <ListItemButton selected={note.id === activeNoteId}>
             <ListItemIcon>
@@ -24,7 +31,7 @@ const NotesList: React.FC<NotesListProps> = ({ activeNoteId }) => {
         </Link>
       ))}
     </List>
-  )
-}
+  );
+};
 
-export default NotesList
+export default NotesList;

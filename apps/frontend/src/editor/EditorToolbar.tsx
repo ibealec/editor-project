@@ -1,3 +1,5 @@
+import { Link } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 import React, { MouseEventHandler } from 'react';
 import { useSlate } from 'slate-react';
 import { Row, VL } from '../shared';
@@ -10,6 +12,8 @@ import {
   toggleMark,
 } from './helpers';
 import Icon from './Icon';
+
+function insertLink() {}
 
 interface ButtonProps {
   active: boolean;
@@ -89,6 +93,11 @@ export const EditorToolbar: React.FC = () => {
       <BlockButton format={CustomElementType.headingOne} icon="h1" />
       <BlockButton format={CustomElementType.headingTwo} icon="h2" />
       <VL />
+      {/* <BlockButton format={CustomElementType.link} icon="link" /> */}
+      <IconButton onClick={insertLink}>
+        <Link></Link>
+      </IconButton>
+
       <BlockButton format={CustomElementType.blockQuote} icon="quote" />
       <BlockButton
         format={CustomElementType.numberedList}

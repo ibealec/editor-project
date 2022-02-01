@@ -1,5 +1,5 @@
 import React, { MouseEvent } from 'react';
-import { BaseElement } from 'slate';
+import { BaseElement, Editor } from 'slate';
 import { RenderElementProps } from 'slate-react';
 import { v4 as id } from 'uuid';
 import LinkPopover from './LinkPopover';
@@ -21,16 +21,16 @@ export interface CustomElement extends BaseElement {
   url?: string;
 }
 
-export const CustomElement: React.FC<RenderElementProps> = ({
-  attributes,
-  children,
-  element,
-}) => {
+export const CustomElement: React.FC<
+  RenderElementProps & { editor: Editor }
+> = ({ attributes, children, element, editor }) => {
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement>): void => {
     setAnchorEl(event.currentTarget);
   };
+
+  const [elementUrl, setElementUrl] = React.useState<string>('');
 
   switch (element.type) {
     case CustomElementType.blockQuote:
@@ -54,6 +54,9 @@ export const CustomElement: React.FC<RenderElementProps> = ({
             anchorEl={anchorEl}
             elId={elId}
             setAnchorEl={setAnchorEl}
+            elementUrl={elementUrl}
+            setElementUrl={setElementUrl}
+            editor={editor}
           />
           <a
             aria-describedby={elId}
