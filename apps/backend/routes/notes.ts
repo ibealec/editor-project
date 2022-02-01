@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+import express, { Request, Response } from 'express';
 import { WebsocketRequestHandler } from 'express-ws';
 import { Descendant } from 'slate';
 import { v4 as id } from 'uuid';
@@ -62,8 +62,27 @@ const postHandler = ({ body }: { body: NoteResponse }, res: Response) => {
   }
 };
 
+const patchHandler = ({ body, params }: Request, res: Response) => {
+  const collectionName = 'Notes';
+  const documentToAdd = collectionName + '/' + params.id;
+  if (body.title) {
+    const document = firebase.doc(documentToAdd);
+    document
+      .update({
+        title: body.title,
+      })
+      .then(() => {
+        res.json({
+          title: body.title,
+        });
+      });
+  }
+};
+
 router.ws('/', notesHandler);
+router.patch('/:id', patchHandler);
 router.post('/', postHandler);
+
 router.ws('/:id', noteHandler);
 
 export default router;

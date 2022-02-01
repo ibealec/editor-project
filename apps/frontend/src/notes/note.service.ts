@@ -13,3 +13,17 @@ export const postNote = (payload: Partial<Note>) => {
     return data;
   });
 };
+
+export const patchNote = (id: string, payload: Partial<Note>) => {
+  return fetch(`http://localhost:3001/api/notes/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  }).then(async (response) => {
+    const data = response.json();
+    return data;
+  });
+};

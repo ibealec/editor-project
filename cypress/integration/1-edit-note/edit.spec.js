@@ -3,7 +3,7 @@
 describe('edit notes', () => {
   beforeEach(() => {
     cy.visit(
-      'http://localhost:3000/notes/047fa79b-6d00-446f-a235-d825812e779d'
+      'http://localhost:3000/notes/aee09178-4c18-46a1-b0c0-a8bdfbb07d43'
     );
   });
 

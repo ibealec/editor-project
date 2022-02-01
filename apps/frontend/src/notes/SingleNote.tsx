@@ -3,6 +3,7 @@ import React from 'react';
 import { ReadyState } from 'react-use-websocket';
 import { Editor } from '../editor';
 import { useNote } from './hooks';
+import { patchNote } from './note.service';
 
 interface SingleNoteProps {
   id: string;
@@ -12,6 +13,29 @@ const Home: React.FC<SingleNoteProps> = ({ id }) => {
   const { note, readyState } = useNote(id);
 
   const [noteTitle, setNoteTitle] = React.useState(note?.title);
+
+  function handleTextChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setNoteTitle(event.target.value);
+    if (event.target.value !== note?.title) {
+      patchNote(id, { title: event.target.value }).then((res) => {
+        console.log('res:', res);
+      });
+    }
+  }
+
+  React.useEffect(() => {
+    if (note?.title) {
+      setNoteTitle(note.title);
+    }
+  }, [note?.title]);
+
+  // React.useEffect(() => {
+  //   if (noteTitle) {
+  //     patchNote(id, { title: noteTitle }).then((res) => {
+  //       console.log('res:', res);
+  //     });
+  //   }
+  // }, [noteTitle]);
 
   const connectionStatusColor = {
     [ReadyState.CONNECTING]: 'info',
@@ -26,7 +50,7 @@ const Home: React.FC<SingleNoteProps> = ({ id }) => {
       <Badge color={connectionStatusColor} variant="dot" sx={{ width: '100%' }}>
         <TextField
           value={noteTitle}
-          onChange={(e) => setNoteTitle(e.target.value)}
+          onChange={handleTextChange}
           variant="standard"
           fullWidth={true}
           inputProps={{ style: { fontSize: 32, color: '#666' } }}

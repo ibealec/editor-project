@@ -28,28 +28,34 @@ const server = Server.configure({
         // @ts-ignore
         content: [yTextToSlateElement(sharedRoot)],
       })
-      .then(() => {});
+      .then(() => {})
+      .catch((e) => {
+        console.log('error', e);
+      });
   },
   async onLoadDocument(data) {
-    if (data.document.isEmpty('content')) {
-      const sharedRoot = data.document.get('content', Y.XmlText);
-      const collectionName = 'Notes';
-      // @ts-ignore
-      const docName = sharedRoot.doc.name;
-      const documentToAdd = collectionName + '/' + docName;
-      const document = await firebase.doc(documentToAdd).get();
-      const docData = document.data();
-      if (docData?.content) {
-        const insertDelta = slateNodesToInsertDelta(docData.content);
+    setTimeout(async () => {
+      if (data.document.isEmpty('content')) {
+        const sharedRoot = data.document.get('content', Y.XmlText);
+        const collectionName = 'Notes';
         // @ts-ignore
-        sharedRoot.applyDelta(insertDelta);
-      } else {
-        //@ts-ignore
-        sharedRoot.applyDelta(slateNodesToInsertDelta(initialValue));
+        const docName = sharedRoot.doc.name;
+        const documentToAdd = collectionName + '/' + docName;
+        const document = await firebase.doc(documentToAdd).get();
+        const docData = document.data();
+        if (docData?.content) {
+          const insertDelta = slateNodesToInsertDelta(docData.content);
+          // @ts-ignore
+          sharedRoot.applyDelta(insertDelta);
+        } else {
+          sharedRoot
+            //@ts-ignore
+            .applyDelta(slateNodesToInsertDelta(initialValue));
+        }
       }
-    }
 
-    return data.document;
+      return data.document;
+    }, 300);
   },
 });
 
